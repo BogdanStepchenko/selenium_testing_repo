@@ -106,7 +106,7 @@ To run the tests locally using Docker, follow these steps:
    ```bash
    docker build -t selenium-tests .
    
-3**Run the Tests**:
+3. **Run the Tests**:
    Once the image is built, you can run the tests using the following command:
    ```bash
     docker run selenium-tests
