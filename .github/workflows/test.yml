@@ -20,60 +20,66 @@ on:
     branches:
       - main
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
-    services:
-      selenium:
-        image: selenium/standalone-chrome:latest
-        options: >-
-          --shm-size=2g
-        ports:
-          - 4444:4444
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+    name: Set up environment and run tests
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    - name: Check out source repository
+      uses: actions/checkout@v4
 
     - name: Set up Python environment
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: "3.10"
 
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        sudo wget https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz
-        sudo tar -zxvf allure-2.32.0.tgz -C /opt/
-        sudo ln -s /opt/allure-2.32.0/bin/allure /usr/bin/allure
+        # If you are using Selenium with a web driver, you may also need to install a driver (e.g. ChromeDriver)
+        sudo apt-get install -y chromium-chromedriver
+        sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
 
-    - name: Build Docker image
+    - name: Install Java (required for Allure reports)
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'microsoft'
+        java-version: '17'
+
+    - name: Install Allure
       run: |
-        docker build -t selenium-tests .
+        sudo wget https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz && 
+        sudo tar -zxvf allure-2.32.0.tgz -C /opt/ && 
+        sudo ln -s /opt/allure-2.32.0/bin/allure /usr/bin/allure
 
     - name: Run all tests
       if: "github.event.inputs.deployment_target == 'all'"
       run: |
-        docker run --shm-size=2g selenium-tests pytest -v --alluredir=results
+        cd tests && pytest -v --alluredir=results
       continue-on-error: true
 
     - name: Run fast-smoke tests
       if: "github.event.inputs.deployment_target == 'fast_smoke'"
       run: |
-        docker run --shm-size=2g selenium-tests pytest -v -m fast_smoke --alluredir=results
+        cd tests && pytest -v -m fast_smoke --alluredir=results
       continue-on-error: true
 
     - name: Run smoke tests
       if: "github.event.inputs.deployment_target == 'smoke'"
       run: |
-        docker run --shm-size=2g selenium-tests pytest -v -m smoke --alluredir=results
+        cd tests && pytest -v -m smoke --alluredir=results
       continue-on-error: true
 
     - name: Run full-test tests
       if: "github.event.inputs.deployment_target == 'full_test'"
       run: |
-        docker run --shm-size=2g selenium-tests pytest -v -m full_test --alluredir=results
+        cd tests && pytest -v -m full_test --alluredir=results
       continue-on-error: true
 
     - name: Generate Allure report
@@ -89,7 +95,7 @@ jobs:
   publish-report:
     name: Publish Allure report
     runs-on: ubuntu-latest
-    needs: build
+    needs: run_tests
     steps:
       - name: Download allure report artifact
         uses: actions/download-artifact@v4
