@@ -1,7 +1,13 @@
+import pytest
+import allure
+
 from pages.helper.text_to_check import SUCCESS_REG_TEXT
 from pages.helper.text_to_check import REQUIRED_FIELD_TEXT, PSWRD_CONFIRMATION_ERROR_TEXT
 
 
+@pytest.mark.fast_smoke
+@allure.story("Impossible to Create Account Without Data")
+@allure.severity(allure.severity_level.CRITICAL)
 def test_impossible_to_create_account_without_data(sign_in_page):
     url = sign_in_page.open_by_url()
     sign_in_page.click_on_create_account_button()
@@ -9,6 +15,9 @@ def test_impossible_to_create_account_without_data(sign_in_page):
     sign_in_page.check_url_was_not_changed(url)
 
 
+@pytest.mark.smoke
+@allure.story("Account Creation with Incorrect Password Confirmation")
+@allure.severity(allure.severity_level.NORMAL)
 def test_account_creation_with_incorrect_password_confirmation(sign_in_page):
     sign_in_page.open_by_url()
     sign_in_page.fill_first_name()
@@ -20,6 +29,9 @@ def test_account_creation_with_incorrect_password_confirmation(sign_in_page):
     sign_in_page.check_if_password_confirmation_error_appeared(PSWRD_CONFIRMATION_ERROR_TEXT)
 
 
+@pytest.mark.full_test
+@allure.story("Correct Account Creation")
+@allure.severity(allure.severity_level.CRITICAL)
 def test_correct_account_creation(sign_in_page, account_page):
     url = sign_in_page.open_by_url()
     sign_in_page.fill_all_fields_with_correct_data()
