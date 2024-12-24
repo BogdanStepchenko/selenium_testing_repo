@@ -1,3 +1,5 @@
 selenium==4.5.0
 pytest==7.1.2
 allure-pytest==2.9.45
+chromedriver-autoinstaller==0.3.1
+webdriver-manager==3.8.5
