@@ -46,7 +46,7 @@ class SignInPage(BasePage):
         else:
             raise ValueError("Password has not been set. Please fill the password first.")
 
-    def fill_incorrect_password_confirmation(self, conf_password):
+    def fill_incorrect_password_confirmation(self, conf_password=None):
         conf_password_element = self.find_element(sign_in.CONF_PASSWORD)
         if not conf_password:
             conf_password = random_password()
