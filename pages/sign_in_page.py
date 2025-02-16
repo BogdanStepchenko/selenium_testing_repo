@@ -1,19 +1,11 @@
-from selenium.webdriver.remote.webdriver import WebDriver
 from pages.locators import sign_in_page as sign_in
 from pages.base_page import BasePage
 from pages.helper.randomizer import random_password, random_name, random_email
 
 
 class SignInPage(BasePage):
-    sign_in_url = 'https://magento.softwaretestingboard.com/customer/account/create/'
-
-    def __init__(self, driver: WebDriver):
-        super().__init__(driver)
-        self.password_value = None
-
-    def open_by_url(self):
-        self.driver.get(self.sign_in_url)
-        return self.driver.current_url
+    page_url = 'https://magento.softwaretestingboard.com/customer/account/create/'
+    password_value = None
 
     def fill_first_name(self, name=None):
         name_element = self.find_element(sign_in.FIRST_NAME)
@@ -36,13 +28,13 @@ class SignInPage(BasePage):
     def fill_password(self, password_value=None):
         password_element = self.find_element(sign_in.PASSWORD)
         if not password_value:
-            self.password_value = random_password()
-        password_element.send_keys(self.password_value)
+            self.__class__.password_value = random_password()
+        password_element.send_keys(self.__class__.password_value)
 
     def fill_correct_password_confirmation(self):
         conf_password_element = self.find_element(sign_in.CONF_PASSWORD)
-        if self.password_value is not None:
-            conf_password_element.send_keys(self.password_value)
+        if self.__class__.password_value is not None:
+            conf_password_element.send_keys(self.__class__.password_value)
         else:
             raise ValueError("Password has not been set. Please fill the password first.")
 
