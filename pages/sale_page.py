@@ -5,11 +5,7 @@ from selenium.webdriver.support import expected_conditions as ec
 
 
 class SalePage(BasePage):
-    sale_page_url = 'https://magento.softwaretestingboard.com/sale.html'
-
-    def open_by_url(self):
-        self.driver.get(self.sale_page_url)
-        return self.driver.current_url
+    page_url = 'https://magento.softwaretestingboard.com/sale.html'
 
     def check_all_sales_cards_are_displayed(self):
         self.find_element(sales.MAIN_SALE)

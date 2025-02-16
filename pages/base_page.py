@@ -4,9 +4,16 @@ from selenium.webdriver.support import expected_conditions as ec
 
 
 class BasePage:
+    page_url = None
 
     def __init__(self, driver: WebDriver):
         self.driver = driver
+
+    def open_by_url(self):
+        if not self.page_url:
+            raise ValueError("page_url is not set in the child class")
+        self.driver.get(self.page_url)
+        return self.driver.current_url
 
     def find_element(self, locator: tuple, timeout=20, parent=None):
         context = parent if parent else self.driver

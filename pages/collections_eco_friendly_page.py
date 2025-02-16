@@ -6,11 +6,7 @@ from pages.locators import collections_eco_friendly_page as eco_friendly
 
 
 class EcoFriendly(BasePage):
-    eco_friendly_url = 'https://magento.softwaretestingboard.com/collections/eco-friendly.html'
-
-    def open_by_url(self):
-        self.driver.get(self.eco_friendly_url)
-        return self.driver.current_url
+    page_url = 'https://magento.softwaretestingboard.com/collections/eco-friendly.html'
 
     def change_products_view_to_list(self):
         list_view_button = self.find_element(eco_friendly.LIST_VIEW_BUTTON)
